@@ -1,0 +1,27 @@
+.pod {
+  display: flex;
+  flex-direction: row;
+  gap: 9rem;
+  align-items: center;
+  justify-content: center;
+  height: auto;
+}
+
+.pod.odd {
+  flex-direction: row-reverse;
+}
+
+.tile-img {
+  height: 65vh;
+  width: auto;
+  /* min-width: 5vw; */
+  opacity: 0;
+  /* width: 30vw;
+  height: auto; */
+}
+
+p {
+  text-align: center;
+  font-size: xx-large;
+  /* padding-top: 30vh; */
+}

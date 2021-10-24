@@ -1,0 +1,7 @@
+.pod-container {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  align-items: center;
+  width: 100vw;
+}

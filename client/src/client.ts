@@ -1,28 +1,32 @@
-import { ApolloClient, InMemoryCache, gql, HttpLink } from "@apollo/client";
-// import { setContext } from "@apollo/client/link/context";
+import { ApolloClient, gql, HttpLink, ApolloLink, from } from "@apollo/client";
+import { setContext } from "@apollo/client/link/context";
+import cache from "./cache";
 
-const typeDefs = gql`
-  extend type User {
-    age: Int
-  }
-  extend type Pet {
-    vaccinated: Boolean!
-  }
-`;
-const resolvers = {
-  User: {
-    age() {
-      return 35;
-    },
-  },
-  Pet: {
-    vaccinated() {
-      return true;
-    },
-  },
-};
+// const typeDefs = gql``;
 
-const link = new HttpLink({ uri: "http://localhost:4000/" });
+// const resolvers = {};
+
+const link = new HttpLink({
+  uri: "http://localhost:4000/graphql",
+  // credentials: "include",
+  // credentials: "same-origin",
+  fetch,
+});
+
+const authMiddleware = new ApolloLink((operation, forward) => {
+  // add the authorization to the headers
+  operation.setContext(({ headers = {} }) => ({
+    headers: {
+      ...headers,
+      authorization: localStorage.getItem("token") || null,
+      // AccessControlAllowOrigin: "*",
+    },
+  }));
+
+  return forward(operation);
+});
+
+// const link = from([authMiddleware, http]);
 
 // const delay = setContext(
 //   (request) =>
@@ -33,15 +37,15 @@ const link = new HttpLink({ uri: "http://localhost:4000/" });
 //     })
 // );
 
-// const link = ApolloLink.from([delay, http]);
+// const cors = setContext(() => {
+//   return { fetchOptions: { mode: "no-cors" } };
+// });
 
-const cache = new InMemoryCache();
+// const link = ApolloLink.from([cors, http]);
 
 const client = new ApolloClient({
   link,
   cache,
-  resolvers,
-  typeDefs,
 });
 
 export default client;
