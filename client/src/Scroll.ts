@@ -15,55 +15,62 @@ export default class Scroll {
   speedTarget: any;
   scrollContainer: any;
   app: any;
+  scrollToRenderHistory: any;
+  auto: any;
 
   constructor() {
     this.experience = new Experience();
-    // this.scrollContainer = container;
     this.scrollContainer = document.querySelector(".scroll");
-    this.docScroll = 0;
     this.scrollToRender = 0;
     this.current = 0;
     this.ease = 0.2;
     this.speed = 0;
     this.speedTarget = 0;
+    this.scrollToRenderHistory = 0;
 
-    this.initEvents();
+    this.experience.on("changeLoaction", (view: any) => {
+      if (view === "/") {
+        window.scrollTo(0, this.scrollToRenderHistory);
+      } else {
+        this.scrollToRenderHistory = this.scrollToRender;
+        window.scrollTo(0, 0);
+      }
+    });
   }
+
   setSize() {
-    // set the heigh of the body in order to keep the scrollbar on the page
     document.body.style.height = `${this.scrollContainer.scrollHeight}px`;
   }
 
   getScroll() {
-    this.docScroll = window.pageYOffset || document.documentElement.scrollTop;
-    return this.docScroll;
+    return window.pageYOffset;
   }
 
   setPosition() {
-    // translates the scrollable element
-    if (
-      Math.round(this.scrollToRender) !== Math.round(this.current) ||
-      this.scrollToRender < 10
-    ) {
+    if (Math.round(this.scrollToRender) !== Math.round(this.current)) {
       this.scrollContainer.style.transform = `translate3d(0,${
         -1 * this.scrollToRender
       }px,0)`;
     }
   }
 
-  initEvents() {
-    window.addEventListener("scroll", this.getScroll.bind(this));
-  }
-
-  update() {
+  updateSpeed() {
     this.speed =
       Math.min(Math.abs(this.current - this.scrollToRender), 200) / 200;
     this.speedTarget += (this.speed - this.speedTarget) * 0.2;
+  }
+
+  update() {
+    this.updateSpeed();
 
     this.current = this.getScroll();
     this.scrollToRender = lerp(this.scrollToRender, this.current, this.ease);
 
     // and translate the scrollable element
     this.setPosition();
+
+    if (document.body.style.height !== this.scrollContainer.scrollHeight) {
+      this.setSize();
+    }
   }
 }

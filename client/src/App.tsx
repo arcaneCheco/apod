@@ -10,17 +10,21 @@ function App() {
   useEffect(() => {
     if (dom && dom.current) {
       exp.initExperience({ dom: dom.current });
+      exp.initScroll();
     }
   }, [dom]);
 
   return (
     <>
       <div className="App">
-        <span>HELOOOOOBEOPB</span>
-        <Router>
-          <Main path="/" />
-          <PodDetail path="/pod/:podTitle" />
-        </Router>
+        <main>
+          <div className="scroll">
+            <Router>
+              <Main path="/" />
+              <PodDetail path="/pod/:podTitle" />
+            </Router>
+          </div>
+        </main>
       </div>
       <div id="sketch" ref={dom}></div>
     </>

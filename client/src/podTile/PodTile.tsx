@@ -10,10 +10,6 @@ const Pod = ({ pod, odd }: any) => {
     <>
       <Link
         to={`/pod/${pod.title}`}
-        // to={{
-        //   pathname: `/pod/${pod.title}`,
-        //   state: pod,
-        // }}
         state={pod}
         style={{ textDecoration: "none", color: "inherit" }}
       >
@@ -23,7 +19,7 @@ const Pod = ({ pod, odd }: any) => {
             src={pod.url}
             alt={pod.title}
             ref={img}
-            onLoad={() => exp.world.imagesHandler.addImage(img.current)}
+            // onLoad={() => exp.world.imagesHandler.addImage(img.current)}
             className="tile-img"
           />
         </div>

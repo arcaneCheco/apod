@@ -3,6 +3,7 @@ import * as THREE from "three";
 import vertexShader from "./shaders/vertex";
 import fragmentShader from "./shaders/fragment";
 import gsap from "gsap";
+import { throwServerError } from "@apollo/client";
 
 export default class ImagesHandler {
   experience: Experience;
@@ -13,6 +14,12 @@ export default class ImagesHandler {
   currentScroll: any;
   loader: any;
   imageGroup: THREE.Group;
+  current: any;
+  currentView: any;
+  transitionFunction: any;
+  currentMesh: THREE.Mesh;
+  detailImage: any;
+
   constructor() {
     this.experience = new Experience();
 
@@ -20,8 +27,12 @@ export default class ImagesHandler {
     this.setMaterial();
     this.imageStore = [];
     this.imageGroup = new THREE.Group();
+    this.experience.scene.add(this.imageGroup);
     this.currentScroll = 0;
     this.loader = new THREE.TextureLoader();
+    this.currentView = "main";
+    this.hideImagesOnChange();
+    this.transitionFunction = this.doTransition;
   }
 
   setGeometry() {
@@ -55,10 +66,6 @@ export default class ImagesHandler {
   async addImage(img: any) {
     const bounds = img.getBoundingClientRect();
 
-    img.addEventListener("click", () => {
-      console.log(img.src, "clicked");
-    });
-
     const texture = await this.loader.load(img.src);
 
     const material = this.material.clone();
@@ -67,13 +74,17 @@ export default class ImagesHandler {
     const mesh = new THREE.Mesh(this.geometry, material);
     mesh.scale.set(bounds.width, bounds.height, 1);
 
-    // this.imageGroup.add(mesh);
+    img.addEventListener("click", () => {
+      this.current = mesh;
+    });
 
-    this.experience.scene.add(mesh);
+    this.imageGroup.add(mesh);
 
-    if (this.experience.scroll) {
-      this.experience.scroll.setSize();
-    }
+    // this.experience.scene.add(mesh);
+
+    // if (this.experience.scroll) {
+    //   this.experience.scroll.setSize();
+    // }
     this.imageStore.push({
       img: img,
       mesh: mesh,
@@ -104,10 +115,59 @@ export default class ImagesHandler {
     }
   }
 
+  doTransition(img: any) {
+    this.currentMesh = this.current.clone();
+    this.experience.scene.add(this.currentMesh);
+    this.experience.scroll.setSize();
+    this.currentScroll = 0;
+    const bounds = img.getBoundingClientRect();
+    this.detailImage = {
+      img: img,
+      mesh: this.currentMesh,
+      top: bounds.top,
+      left: bounds.left,
+      width: bounds.width,
+      height: bounds.height,
+    };
+    gsap.to(this.currentMesh.scale, {
+      x: bounds.width,
+      y: bounds.height,
+      duration: 2,
+    });
+    const x = bounds.left - this.experience.width / 2 + bounds.width / 2;
+    const y =
+      this.currentScroll -
+      bounds.top +
+      this.experience.height / 2 -
+      bounds.height / 2;
+    gsap.to(this.currentMesh.position, { x, y, duration: 2 });
+    // let currentObj: any = {};
+    // this.imageStore.forEach((o) => {
+    //   if (o.mesh.name === "current") {
+    //     currentObj = { ...o, mesh: o.mesh.clone(), img };
+    //   }
+    // });
+    // const currentObj = this.imageStore.find((o) => o.mesh.name === "current");
+  }
+
   resize() {
     // do the rescalng here
+    // if (this.currentView === "main") {
     this.imageStore.forEach((o) => {
       this.rescaleImages(o);
+    });
+    // }
+  }
+
+  hideImagesOnChange() {
+    this.experience.on("changeLoaction", (view: any) => {
+      if (view !== "/") {
+        this.experience.scene.remove(this.imageGroup);
+      } else {
+        this.experience.scene.remove(this.currentMesh);
+        this.experience.scene.add(this.imageGroup);
+        this.experience.scroll.setSize();
+      }
     });
   }
 
@@ -118,11 +178,28 @@ export default class ImagesHandler {
     if (this.experience.scroll) {
       this.currentScroll = this.experience.scroll.scrollToRender;
     }
+    if (this.detailImage) {
+      this.detailImage.mesh.position.x =
+        this.detailImage.left -
+        this.experience.width / 2 +
+        this.detailImage.width / 2;
+      this.detailImage.mesh.position.y =
+        -this.detailImage.top +
+        this.experience.height / 2 -
+        this.detailImage.height / 2;
+      this.detailImage.mesh.position.y += this.currentScroll;
+    }
     this.setPosition();
 
     // const intersects = this.experience.raycaster.intersectObjects(
-    //   this.experience.scene.children
+    //   this.imageGroup.children
     // );
+    // if (intersects.length) {
+    //   this.current = intersects[0].object;
+    // } else {
+    //   this.current = null;
+    // }
+
     // if (intersects.length) {
     //   const target = intersects[0].object;
     //   console.log(target);

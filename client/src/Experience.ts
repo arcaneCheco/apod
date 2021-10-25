@@ -21,6 +21,7 @@ export default class Experience extends EventEmitter {
   postProcessing: PostProcessing;
   mouse: THREE.Vector2;
   raycaster: THREE.Raycaster;
+  currentView: String;
 
   constructor() {
     super();
@@ -29,6 +30,21 @@ export default class Experience extends EventEmitter {
     }
     Experience.instance = this;
     this.time = 0;
+
+    this.currentView = window.location.pathname;
+
+    this.setLoactionObserver();
+  }
+
+  setLoactionObserver() {
+    let lastUrl = window.location.href;
+    new MutationObserver(() => {
+      const url = window.location.href;
+      if (url !== lastUrl) {
+        lastUrl = url;
+        this.emit("changeLoaction", window.location.pathname);
+      }
+    }).observe(document, { subtree: true, childList: true });
   }
 
   initExperience(_options: any = {}) {
@@ -54,7 +70,7 @@ export default class Experience extends EventEmitter {
     });
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.setSize(this.width, this.height);
-    this.renderer.setClearColor(0x999999);
+    // this.renderer.setClearColor(0x999999);
     this.container.appendChild(this.renderer.domElement);
 
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
@@ -63,7 +79,7 @@ export default class Experience extends EventEmitter {
     this.update();
     this.setupResize();
     this.world = new World();
-    this.initScroll();
+    // this.initScroll();
     this.resize();
     this.setMouse();
     // this.setPostProcessing();
