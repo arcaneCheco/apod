@@ -1,0 +1,30 @@
+.login {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-grow: 1;
+  padding-bottom: 8 * 6;
+  color: white;
+  background-color: #220a82;
+  background-size: cover;
+  background-position: center;
+}
+
+.login-form {
+  width: 100%;
+  max-width: 406em;
+  padding: 8 * 3.5;
+  border-radius: 3;
+  box-shadow: 6px 6px 1px rgba(0, 0, 0, 0.25);
+  color: #343c5a;
+  background-color: white;
+}
+
+input {
+  width: 100%;
+  margin-bottom: 8 * 2;
+  padding: 10px 20px;
+  border: 1px solid grey;
+  font-size: 16;
+  outline: none;
+}

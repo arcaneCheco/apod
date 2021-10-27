@@ -8,6 +8,12 @@ const resolvers = {
       return pods;
     },
   },
+  Mutation: {
+    login: async (_: any, { username }: any, { dataSources }: any) => {
+      const user = await dataSources.userAPI.findOrCreateUser({ username });
+      return user;
+    },
+  },
 };
 
 export default resolvers;

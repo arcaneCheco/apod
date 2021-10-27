@@ -3,7 +3,8 @@ import { gql } from "apollo-server";
 const typeDefs = gql`
   type User {
     id: ID!
-    email: String!
+    username: String!
+    token: String
   }
   type POD {
     copyright: String
@@ -16,6 +17,10 @@ const typeDefs = gql`
   type Query {
     me(email: String): String
     pods: [POD]!
+  }
+
+  type Mutation {
+    login(username: String): User
   }
 `;
 export default typeDefs;

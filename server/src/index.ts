@@ -1,62 +1,70 @@
-// import { ApolloServer } from "apollo-server";
-import express from "express";
-import { ApolloServer } from "apollo-server-express";
+import { ApolloServer } from "apollo-server";
+import Redis from "ioredis";
 import dotenv from "dotenv";
 dotenv.config();
-import cors from "cors";
 import typeDefs from "./schema";
 import resolvers from "./resolvers";
 import ApodAPI from "./datasources/apod";
+import userAPI from "./datasources/user";
+
+/**
+ * db stuff
+ */
+// const store: Redis.Redis = new Redis();
 
 const PORT = process.env.PORT || 4000;
 
-// const server = new ApolloServer({
-//   typeDefs,
-//   resolvers,
-//   dataSources: () => ({
-//     apodAPI: new ApodAPI(),
-//   }),
-//   cors: {
-//     origin: "*",
-//     // origin: "http://localhost:3000",
-//     credentials: true,
-//     allowedHeaders: [
-//       "Access-Control-Allow-Origin",
-//       "content-type",
-//       "Origin, X-Requested-With, Content-Type, Accept",
-//       "Access-Control-Allow-Headers",
-//     ],
-//   },
-// });
-
-// server.listen(PORT).then(() => {
-//   console.log("listening on port 4000");
-// });
-
-const startServer = async () => {
-  const server = new ApolloServer({
-    typeDefs,
-    resolvers,
-    dataSources: () => ({
-      apodAPI: new ApodAPI(),
-    }),
-  });
-  await server.start();
-  const app = express();
-  const corsOptions = {
+const server = new ApolloServer({
+  context: async ({ req }) => {
+    // simple auth check on every request
+    const token = (req.headers && req.headers.authorization) || "";
+    const username = Buffer.from(token, "base64").toString("ascii");
+    // if (!username) {
+    //   console.log("not authorized");
+    //   return { user: null };
+    // } else {
+    //   console.log("aall good");
+    // }
+    // find a user by their username
+    const user = await userAPI.findOrCreateUser({ username });
+    // console.log(user);
+    return { user };
+  },
+  typeDefs,
+  resolvers,
+  dataSources: () => ({
+    apodAPI: new ApodAPI(),
+    userAPI,
+  }),
+  cors: {
     origin: "*",
-    // origin: "http://localhost:3000",
-    // methods: ["GET", "POST", "DELETE", "UPDATE", "PUT", "PATCH"],
-    // preflightContinue: false,
-    // allowedHeaders: ["Content-Type", "Origin", "X-Requested-With", "Accept"],
-    credentials: true, // <-- REQUIRED backend setting
-  };
-  app.use(cors(corsOptions));
-  // server.applyMiddleware({ app, cors: false, path: "/graphql" });
-  server.applyMiddleware({ app });
-  app.listen(PORT, () => {
-    console.log("listening on port 4000");
-  });
-};
+    credentials: true,
+  },
+});
 
-startServer();
+server.listen(PORT).then(() => {
+  console.log("listening on port 4000");
+});
+
+// const startServer = async () => {
+//   const server = new ApolloServer({
+//     typeDefs,
+//     resolvers,
+//     dataSources: () => ({
+//       apodAPI: new ApodAPI(),
+//     }),
+//   });
+//   await server.start();
+//   const app = express();
+//   const corsOptions = {
+//     origin: "*",
+//     credentials: true, // <-- REQUIRED backend setting
+//   };
+//   app.use(cors(corsOptions));
+//   server.applyMiddleware({ app });
+//   app.listen(PORT, () => {
+//     console.log("listening on port 4000");
+//   });
+// };
+
+// startServer();

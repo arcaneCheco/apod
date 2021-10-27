@@ -1,8 +1,8 @@
 import PodContainer from "./podContainer/PodContainer";
 import { RouteComponentProps } from "@reach/router";
 
-interface MaainProps extends RouteComponentProps {}
-const Main: React.FC<MaainProps> = () => {
+interface MainProps extends RouteComponentProps {}
+const Main: React.FC<MainProps> = () => {
   return (
     // <main>
     //   <div className="scroll">

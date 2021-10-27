@@ -1,0 +1,29 @@
+.footer-container {
+  flex-shrink: 0;
+  margin-top: auto;
+  background-color: white;
+  color: #747790;
+  position: sticky;
+  bottom: 0;
+  height: 100px;
+}
+
+.footer-container-inner {
+  display: flex;
+  align-items: "center";
+  max-width: 460;
+  padding: 8 * 2.5;
+  margin: "0 auto";
+}
+
+.footer-item {
+  text-decoration: "none";
+  flex-grow: 1;
+  width: 0;
+  font-family: "inherit";
+  font-size: 20;
+  color: "inherit";
+  letter-spacing: 1.5;
+  text-transform: "uppercase";
+  text-align: "center";
+}
