@@ -9,6 +9,7 @@ const ALL_PODS = gql`
       title
       url
       explanation
+      date
     }
   }
 `;

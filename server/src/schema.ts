@@ -5,6 +5,7 @@ const typeDefs = gql`
     id: ID!
     username: String!
     token: String
+    pods: [POD]!
   }
   type POD {
     copyright: String
@@ -14,13 +15,23 @@ const typeDefs = gql`
     url: String
   }
 
+  input PODInput {
+    explanation: String
+    copyright: String
+    date: String
+    title: String
+    url: String
+  }
+
   type Query {
     me(email: String): String
     pods: [POD]!
+    userPods: [POD]!
   }
 
   type Mutation {
     login(username: String): User
+    addPod(pod: PODInput): Boolean
   }
 `;
 export default typeDefs;

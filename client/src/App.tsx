@@ -6,6 +6,7 @@ import PodDetail from "./podDetail/PodDetail";
 import Footer from "./footer/Footer";
 import { useState } from "react";
 import Login from "./login/Login";
+import SavedPods from "./savedPods/SavedPods";
 import { exp } from "./cache";
 import "./App.css";
 
@@ -35,6 +36,7 @@ function App() {
               <Router>
                 <Main path="/" />
                 <PodDetail path="/pod/:podTitle" />
+                <SavedPods path="/saved" />
               </Router>
             ) : (
               <Login />

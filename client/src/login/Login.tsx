@@ -1,5 +1,5 @@
 import { gql, useMutation } from "@apollo/client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { isLoggedInVar } from "../cache";
 
@@ -20,7 +20,6 @@ const Login = () => {
   const [login, { loading, error }] = useMutation(LOGIN_USER, {
     onCompleted({ login }) {
       if (login) {
-        console.log("TOKEN", login.token);
         localStorage.setItem("token", login.token as string);
         localStorage.setItem("userId", login.id as string);
         isLoggedInVar(true);

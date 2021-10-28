@@ -1,4 +1,5 @@
 import { Link } from "@reach/router";
+import LogoutButton from "../logoutButton/LogoutButton";
 import "./Footer.css";
 
 const Footer = () => {
@@ -10,15 +11,11 @@ const Footer = () => {
             {/* <HomeIcon /> */}
             Home
           </Link>
-          <Link className="footer-item" to="/cart">
+          <Link className="footer-item" to="/saved">
             {/* <CartIcon /> */}
-            Cart
+            Saved
           </Link>
-          <Link className="footer-item" to="/profile">
-            {/* <ProfileIcon /> */}
-            Profile
-          </Link>
-          {/* <LogoutButton /> */}
+          <LogoutButton />
         </div>
       </div>
     </>

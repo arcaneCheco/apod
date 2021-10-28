@@ -1,5 +1,4 @@
 import { ApolloServer } from "apollo-server";
-import Redis from "ioredis";
 import dotenv from "dotenv";
 dotenv.config();
 import typeDefs from "./schema";
@@ -18,7 +17,9 @@ const server = new ApolloServer({
   context: async ({ req }) => {
     // simple auth check on every request
     const token = (req.headers && req.headers.authorization) || "";
+    console.log(token, "token");
     const username = Buffer.from(token, "base64").toString("ascii");
+    // do some kind of username validation, no spaces etc.
     // if (!username) {
     //   console.log("not authorized");
     //   return { user: null };
@@ -27,7 +28,7 @@ const server = new ApolloServer({
     // }
     // find a user by their username
     const user = await userAPI.findOrCreateUser({ username });
-    // console.log(user);
+
     return { user };
   },
   typeDefs,
