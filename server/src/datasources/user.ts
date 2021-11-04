@@ -4,9 +4,10 @@ import Redis from "ioredis";
 class UserAPI extends DataSource {
   store: Redis.Redis;
   context: any;
-  constructor() {
+  constructor({ store }: any) {
     super();
     this.store = new Redis();
+    this.store = store;
   }
 
   initialize(config: any) {
@@ -68,4 +69,5 @@ class UserAPI extends DataSource {
   }
 }
 
-export default new UserAPI();
+export default UserAPI;
+// export default new UserAPI();

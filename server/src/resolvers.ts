@@ -11,6 +11,10 @@ const resolvers = {
       const userPods = await dataSources.userAPI.getSavedPods();
       return userPods;
     },
+    podsForCaching: async (_: any, __: any, { dataSources }: any) => {
+      const podsForCaching = await dataSources.apodAPI.populateDB();
+      return podsForCaching;
+    },
   },
   Mutation: {
     login: async (_: any, { username }: any, { dataSources }: any) => {

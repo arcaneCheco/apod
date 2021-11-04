@@ -27,6 +27,7 @@ const typeDefs = gql`
     me(email: String): String
     pods: [POD]!
     userPods: [POD]!
+    podsForCaching: [POD]!
   }
 
   type Mutation {

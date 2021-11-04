@@ -19,4 +19,6 @@ const cache = new InMemoryCache({
 
 export const isLoggedInVar = makeVar<boolean>(!!localStorage.getItem("token"));
 
+export const savedPodsVar = makeVar<any[]>([]);
+
 export default cache;

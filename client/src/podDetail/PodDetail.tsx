@@ -2,7 +2,35 @@ import { exp } from "../cache";
 import { useEffect, useRef } from "react";
 import { Link } from "@reach/router";
 import { gql, useMutation } from "@apollo/client";
+import { savedPodsVar } from "../cache";
 import "./PodDetail.css";
+
+// update cache stuff
+// const GET_SAVED_PODS = gql`
+//   query GetSavedPods {
+//     userPods {
+//       title
+//       date
+//       url
+//     }
+//   }
+// `;
+
+// client.query({ query: GET_SAVED_PODS }).then((res: any) => {
+//   console.log(res);
+//   savedPodsVar(res);
+// });
+
+// const GET_SAVED_PODS_FROM_CACHE = gql`
+//   query GetSavedPodsFromCache {
+//     savedPods @client
+//   }
+// `;
+
+// client
+//   .query({ query: GET_SAVED_PODS_FROM_CACHE })
+//   .then((res) => console.log("from cahce: ", res));
+//
 
 export const ADD_POD = gql`
   mutation AddPod($POD: PODInput) {
@@ -16,18 +44,22 @@ const PodDetail = ({ location }: any) => {
   const pod = location.state;
   const img = useRef<HTMLImageElement>(null);
 
-  const clickHandler = () => {
-    addPod({
+  const clickHandler = async () => {
+    await addPod({
       variables: {
         POD: { title: pod.title, date: pod.date, url: pod.url },
       },
     });
+
+    const current = savedPodsVar();
+    savedPodsVar([pod, ...current]);
   };
 
   const initTransition = () => {
     exp.world.imagesHandler.currentView = "detail";
     exp.world.imagesHandler.doTransition(img.current);
   };
+
   return (
     <>
       <Link to="/">BACK</Link>
